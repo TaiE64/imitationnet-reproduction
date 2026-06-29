@@ -10,10 +10,11 @@ from robot_kinematics import RobotFK
 from human_repr import load_humanml3d_poses, human_limb_frames_canon
 from rotations import s_rd_rot, rotmat_to_6d
 from imitationnet_model import ImitationNet
+from paths import ckpt
 
 dev = "cpu"
 fk = RobotFK(device=dev)
-_c = torch.load("checkpoints_imitation_purefk/imitationnet.pt", map_location=dev)
+_c = torch.load(ckpt("purefk"), map_location=dev)
 model = ImitationNet(latent=_c.get("latent", 8), hidden=_c.get("hidden", 128)).to(dev)
 model.load_state_dict(_c["model"])
 model.eval()

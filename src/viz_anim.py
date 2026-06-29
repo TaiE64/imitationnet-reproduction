@@ -13,9 +13,10 @@ from robot_kinematics import RobotFK
 from human_repr import human_limb_frames_canon, HML3D_ROOT
 from rotations import rotmat_to_6d, body_frame
 from imitationnet_model import ImitationNet
+from paths import ckpt, media
 
 fk = RobotFK()
-_c = torch.load("checkpoints_imitation_purefk/imitationnet.pt", map_location="cpu")
+_c = torch.load(ckpt("purefk"), map_location="cpu")
 model = ImitationNet(latent=_c.get("latent", 8), hidden=_c.get("hidden", 128))
 model.load_state_dict(_c["model"])
 model.eval()
@@ -93,6 +94,6 @@ def update(t):
 
 
 anim = FuncAnimation(fig, update, frames=T, interval=60)
-out = "/home/taie/Downloads/Reproduce/ImitationNet/retarget_anim.gif"
+out = media("retarget_anim.gif")
 anim.save(out, writer=PillowWriter(fps=15))
 print("saved", out)

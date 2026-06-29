@@ -6,7 +6,7 @@ A from-scratch reproduction (no official code released) of:
 
 The model learns to map a **human arm pose → TIAGo++ robot joint angles** through a shared latent space, **without any paired human–robot data**.
 
-![retargeting demo](retarget_best.gif)
+![retargeting demo](media/retarget_best.gif)
 
 *Left: human arm (3 joints/arm). Right: retargeted TIAGo++ arm (full 7-DOF chain). Body-canonicalized so the configurations are directly comparable.*
 
@@ -56,7 +56,16 @@ The paper's indirect latent alignment plateaus at 82°. Adding a **differentiabl
 
 ## Repository layout
 
-| File | Purpose |
+```
+.
+├── src/            # all code
+├── media/          # result gifs / pngs (shown above)
+├── checkpoints/    # trained models (purefk = best feed-forward, rot = paper-faithful)
+├── README.md
+└── EXPERIMENTS.md  # full experiment log v1–v12 + all findings
+```
+
+| `src/` file | Purpose |
 |---|---|
 | `robot_kinematics.py` | TIAGo++ FK (pytorch_kinematics), arm sampling, canonical limb frames |
 | `human_repr.py` | HumanML3D loading, canonical limb frames |
@@ -67,8 +76,8 @@ The paper's indirect latent alignment plateaus at 82°. Adding a **differentiabl
 | `generate_robot_bank.py` | sample the ~15M robot-pose bank |
 | `train_imitationnet.py` | training (all flags: `--lambda_fk`, `--latent`, `--pure_fk`, …) |
 | `eval_retarget.py` | retargeting evaluation |
-| `viz_full.py` / `viz_anim.py` / `viz_best.py` | visualizations |
-| `EXPERIMENTS.md` | **full experiment log v1–v12 + all findings** |
+| `viz_*.py` | visualizations (`viz_best.py` = refined demo) |
+| `paths.py` | CWD-independent project paths |
 
 ---
 
@@ -76,22 +85,24 @@ The paper's indirect latent alignment plateaus at 82°. Adding a **differentiabl
 
 Requires the TIAGo++ URDF and HumanML3D dataset (paths set at the top of `human_repr.py` / `robot_kinematics.py`).
 
+Run all commands from the repository root (`python src/<script>.py`):
+
 ```bash
 # 1. generate the robot-pose bank (~15M poses, ~2.3 GB, ~2 min)
-python generate_robot_bank.py --n 15000000
+python src/generate_robot_bank.py --n 15000000
 
 # 2. train — best feed-forward (pure differentiable-FK)
-python train_imitationnet.py --device cuda --steps 80000 \
-    --pure_fk --lambda_fk 30 --latent 32 --ckpt checkpoints_imitation_purefk
+python src/train_imitationnet.py --device cuda --steps 80000 \
+    --pure_fk --lambda_fk 30 --latent 32 --ckpt checkpoints/purefk
 
 #    or the paper-faithful version (triplet only)
-python train_imitationnet.py --device cuda --steps 30000 --ckpt checkpoints_imitation_rot
+python src/train_imitationnet.py --device cuda --steps 30000 --ckpt checkpoints/rot
 
-# 3. evaluate
-python eval_retarget.py
+# 3. evaluate (loads checkpoints/purefk)
+python src/eval_retarget.py
 
-# 4. visualize (static strip + animation, with test-time refinement)
-python viz_best.py
+# 4. visualize -> media/ (static strip + animation, with test-time refinement)
+python src/viz_best.py
 ```
 
 Environment: PyTorch (CUDA), `pytorch_kinematics`, `matplotlib`, `numpy`.
@@ -101,7 +112,7 @@ Environment: PyTorch (CUDA), `pytorch_kinematics`, `matplotlib`, `numpy`.
 ## Notes
 
 - Robot data is **synthetic** (sampled from the URDF configuration space + FK) — there is no downloadable robot-motion dataset.
-- The 15M-pose bank (`robot_bank.npz`, ~2.3 GB) is **not committed** — regenerate it with `generate_robot_bank.py`.
+- The 15M-pose bank (`robot_bank.npz`, ~2.3 GB) is **not committed** — regenerate it with `src/generate_robot_bank.py`.
 - Every experiment, dead-end, and divergence-from-paper is logged honestly in [EXPERIMENTS.md](EXPERIMENTS.md).
 
 🤖 Reproduced with [Claude Code](https://claude.com/claude-code)

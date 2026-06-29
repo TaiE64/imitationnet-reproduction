@@ -10,12 +10,14 @@ and optimizes L_triplet + L_rec + L_ltc (paper Eq.2-5).
 Adam, lr 1e-3, batch 256 (paper §IV-A).
 """
 import argparse
+import os
 import torch
 from robot_kinematics import RobotFK
 from human_repr import load_humanml3d_poses, human_limb_frames_canon
 from rotations import sixd_to_rotmat, rotmat_to_6d, s_rd_rot_pairwise, s_rd_rot
 from imitationnet_model import ImitationNet
 from imitationnet_losses import imitation_loss
+from paths import CKPT
 
 
 def main():
@@ -33,12 +35,12 @@ def main():
     ap.add_argument("--hidden", type=int, default=128)       # MLP hidden width (paper=128)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--smoke", action="store_true")
-    ap.add_argument("--ckpt", default="checkpoints_imitation")
+    ap.add_argument("--ckpt", default=os.path.join(CKPT, "run"))   # output dir for this run
     args = ap.parse_args()
     if args.smoke:
         args.steps, args.n_robot, args.cand, args.device, args.pos_pool = 200, 2000, 64, "cpu", 3000
+        args.ckpt = os.path.join(CKPT, "smoke")
 
-    import os
     os.makedirs(args.ckpt, exist_ok=True)
     dev = torch.device(args.device if torch.cuda.is_available() or args.device == "cpu" else "cpu")
 

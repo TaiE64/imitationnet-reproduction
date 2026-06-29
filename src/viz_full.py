@@ -11,9 +11,10 @@ from robot_kinematics import RobotFK
 from human_repr import load_humanml3d_poses, human_limb_frames_canon
 from rotations import rotmat_to_6d, body_frame
 from imitationnet_model import ImitationNet
+from paths import ckpt, media
 
 fk = RobotFK()
-_c = torch.load("checkpoints_imitation_purefk/imitationnet.pt", map_location="cpu")
+_c = torch.load(ckpt("purefk"), map_location="cpu")
 model = ImitationNet(latent=_c.get("latent", 8), hidden=_c.get("hidden", 128))
 model.load_state_dict(_c["model"])
 model.eval()
@@ -63,6 +64,6 @@ for i in range(6):
     ax2.plot(*canon(torch.stack([lsh, rsh]), lsh, rsh).numpy().T, "-", color="gray", lw=2)
 
 plt.tight_layout()
-out = "/home/taie/Downloads/Reproduce/ImitationNet/retarget_full.png"
+out = media("retarget_full.png")
 plt.savefig(out, dpi=95, bbox_inches="tight")
 print("saved", out)

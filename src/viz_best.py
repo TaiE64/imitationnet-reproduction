@@ -14,9 +14,10 @@ from robot_kinematics import RobotFK
 from human_repr import load_humanml3d_poses, human_limb_frames_canon, HML3D_ROOT
 from rotations import rotmat_to_6d, body_frame, s_rd_rot
 from imitationnet_model import ImitationNet
+from paths import ckpt, media
 
 fk = RobotFK()
-_c = torch.load("checkpoints_imitation_purefk/imitationnet.pt", map_location="cpu")
+_c = torch.load(ckpt("purefk"), map_location="cpu")
 model = ImitationNet(latent=_c.get("latent", 8), hidden=_c.get("hidden", 128))
 model.load_state_dict(_c["model"]); model.eval()
 LARM = [f"arm_left_{i}_link" for i in range(1, 8)]
@@ -74,7 +75,7 @@ for i in range(6):
     hc = canon(Js[i], Js[i][16], Js[i][17])
     a1 = fig.add_subplot(2, 6, i + 1, projection="3d"); setup(a1, "HUMAN" if i == 0 else ""); draw_human(a1, hc)
     a2 = fig.add_subplot(2, 6, i + 7, projection="3d"); setup(a2, "ROBOT (refined ~5deg)" if i == 0 else ""); draw_robot(a2, rp, i)
-plt.tight_layout(); plt.savefig("/home/taie/Downloads/Reproduce/ImitationNet/retarget_best.png", dpi=95, bbox_inches="tight")
+plt.tight_layout(); plt.savefig(media("retarget_best.png"), dpi=95, bbox_inches="tight")
 print("saved retarget_best.png")
 
 # ---------- refined animation ----------
@@ -100,5 +101,5 @@ def upd(t):
 
 
 FuncAnimation(figA, upd, frames=Ta, interval=60).save(
-    "/home/taie/Downloads/Reproduce/ImitationNet/retarget_best.gif", writer=PillowWriter(fps=15))
+    media("retarget_best.gif"), writer=PillowWriter(fps=15))
 print("saved retarget_best.gif")
