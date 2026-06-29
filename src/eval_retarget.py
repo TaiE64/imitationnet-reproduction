@@ -1,7 +1,7 @@
 """
 ImitationNet reproduction — evaluate retargeting (global-rotation / faithful version).
 
-Human (local 6D input) -> Q_h -> latent -> D_r -> robot joint angles -> FK -> robot limb
+Human (4-limb body-canonical 6D input) -> Q_h -> latent -> D_r -> robot joint angles -> FK -> robot limb
 GLOBAL rotations. Faithful S_RD compares human vs retargeted-robot limb rotations.
 Lower S_RD and per-limb geodesic angle = better; compared against a RANDOM robot baseline.
 """
