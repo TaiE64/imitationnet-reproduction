@@ -14,7 +14,7 @@ from paths import ckpt
 
 dev = "cpu"
 fk = RobotFK(device=dev)
-_c = torch.load(ckpt("purefk"), map_location=dev)
+_c = torch.load(ckpt("best"), map_location=dev)
 model = ImitationNet(latent=_c.get("latent", 8), hidden=_c.get("hidden", 128)).to(dev)
 model.load_state_dict(_c["model"])
 model.eval()

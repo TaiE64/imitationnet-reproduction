@@ -17,7 +17,7 @@ from imitationnet_model import ImitationNet
 from paths import ckpt, media
 
 fk = RobotFK()
-_c = torch.load(ckpt("purefk"), map_location="cpu")
+_c = torch.load(ckpt("best"), map_location="cpu")
 model = ImitationNet(latent=_c.get("latent", 8), hidden=_c.get("hidden", 128))
 model.load_state_dict(_c["model"]); model.eval()
 LARM = [f"arm_left_{i}_link" for i in range(1, 8)]

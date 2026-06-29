@@ -7,7 +7,7 @@ MEDIA = os.path.join(ROOT, "media")                                # gifs / pngs
 
 
 def ckpt(name):
-    """checkpoint file for a run name, e.g. ckpt('purefk')."""
+    """checkpoint file for a run name, e.g. ckpt('best')."""
     return os.path.join(CKPT, name, "imitationnet.pt")
 
 

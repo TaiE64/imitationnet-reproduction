@@ -60,7 +60,7 @@ The paper's indirect latent alignment plateaus at 82°. Adding a **differentiabl
 .
 ├── src/            # all code
 ├── media/          # result gifs / pngs (shown above)
-├── checkpoints/    # trained models (purefk = best feed-forward, rot = paper-faithful)
+├── checkpoints/    # trained model: best/ (pure-FK feed-forward, latent 32 — the best model)
 ├── README.md
 └── EXPERIMENTS.md  # full experiment log v1–v12 + all findings
 ```
@@ -93,12 +93,12 @@ python src/generate_robot_bank.py --n 15000000
 
 # 2. train — best feed-forward (pure differentiable-FK)
 python src/train_imitationnet.py --device cuda --steps 80000 \
-    --pure_fk --lambda_fk 30 --latent 32 --ckpt checkpoints/purefk
+    --pure_fk --lambda_fk 30 --latent 32 --ckpt checkpoints/best
 
 #    or the paper-faithful version (triplet only)
 python src/train_imitationnet.py --device cuda --steps 30000 --ckpt checkpoints/rot
 
-# 3. evaluate (loads checkpoints/purefk)
+# 3. evaluate (loads checkpoints/best)
 python src/eval_retarget.py
 
 # 4. visualize -> media/ (static strip + animation, with test-time refinement)

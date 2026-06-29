@@ -2,7 +2,6 @@ __pycache__/
 *.pyc
 *.npz
 
-# checkpoints: track only the two meaningful runs, ignore intermediate experiments
+# checkpoints: track only the best model; intermediate runs are regenerable
 checkpoints/*
-!checkpoints/purefk/
-!checkpoints/rot/
+!checkpoints/best/
